@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Users {
+  id       Int     @id @default(autoincrement())
+  name     String
+  username String
+  password String
+  isActive Boolean
+
+  userRoles User_role[]
+}
+
+model User_role {
+  id Int @id @default(autoincrement())
+
+  usersId Int?
+  roleId  Int?
+
+  users Users? @relation(fields: [usersId], references: [id])
+  role  Role?  @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  roleName    String
+  roleCode    String
+  description String
+
+  userRoles      User_role[]
+  rolePermission Role_permission[]
+}
+
+model Role_permission {
+  id     Int   @id @default(autoincrement())
+  roleId Int?
+  role   Role? @relation(fields: [roleId], references: [id])
+}
+
+model Module {
+  id         Int    @id @default(autoincrement())
+  moduleName String
+  moduleCode String
+  parentId   Int?
+  path       String
+  sortOrder  Int
+  isActive   Int
+
+  modulePermission Module_permission[]
+}
+
+model Permission {
+  id             Int    @id @default(autoincrement())
+  permission     String
+  permissionCode String
+  description    String
+
+  modulePermission Module_permission[]
+}
+
+model Module_permission {
+  id           Int         @id @default(autoincrement())
+  permissionId Int?
+  moduleId     Int?
+
+  permission   Permission? @relation(fields: [permissionId], references: [id])
+  module Module? @relation(fields: [moduleId], references: [id])
+}
