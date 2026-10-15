@@ -11,8 +11,16 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2023",
-    "sourceMap": true,
+    "sourceMap": true, 
     "outDir": "./dist",
+      "paths": {
+        "@users/*": ["./src/users/*"],
+        "@prisma-service/*": ["./src/prisma/*"],
+        "@prisma-schema/*": ["./prisma/*"],
+        "@prisma-generated-client/*": ["./src/generated/*"],
+        "@environments/*": ["./environments/*"],
+        "@test/*": ["./test/*"]
+    },
     "rootDir": ".",
     "incremental": true,
     "skipLibCheck": true,
