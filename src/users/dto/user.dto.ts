@@ -11,14 +11,13 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @MaxLength(100)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, {
+  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: `
-        Minimal 8 karakter.
-        Minimal 1 huruf kecil (a-z).
-        Minimal 1 huruf besar (A-Z).
-        Minimal 1 angka (0-9).
-        Minimal 1 karakter spesial (@$!%*?&).
-    `, 
+      Passwords will contain at least 1 upper case letter
+      Passwords will contain at least 1 lower case letter
+      Passwords will contain at least 1 number or special character
+      There is no length validation (min, max) in this regex!
+    `,
   })
   password: string;
 }

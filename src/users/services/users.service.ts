@@ -1,39 +1,16 @@
 import { Injectable } from '@nestjs/common';
-// import { PrismaService } from '../../services/prisma/prisma.service.js';
-// import { Prisma, Users } from '../../generated/prisma/client.js';
+import { PrismaService } from '@prisma-service/prisma.service.js';
+import { Prisma, Users } from '../../generated/prisma/client.js';
 
 @Injectable()
 export class UsersService {
-  // constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService){ }
 
-  // async getUser(where: Prisma.UsersWhereUniqueInput): Promise<Users | null> {
-  //   return this.prisma.users.findUnique({ where });
-  // }
+  async createUser(payload: Prisma.UsersCreateInput): Promise<Users>{
+    return this.prisma.users.create({ data: payload });
+  }
 
-  // async getUsers(params: {
-  //   skip: number;
-  //   take: number;
-  //   cursor: Prisma.UsersWhereUniqueInput;
-  //   where: Prisma.UsersWhereInput;
-  //   orderBy: Prisma.UsersOrderByWithRelationInput;
-  // }): Promise<Users[]> {
-  //   const { skip, take, cursor, where, orderBy } = params;
-  //   return this.prisma.users.findMany({ skip, take, cursor, where, orderBy });
-  // }
-
-  // async createUser(data: Prisma.UsersCreateInput): Promise<Users> {
-  //   return this.prisma.users.create({ data })
-  // }
-
-  // async updateUser(params: {
-  //   where: Prisma.UsersWhereUniqueInput,
-  //   data: Prisma.UsersUpdateInput
-  // }){
-  //   const { where, data } = params;
-  //   return this.prisma.users.update({ data , where })
-  // }
-
-  // async deleteUser(where: Prisma.UsersWhereUniqueInput): Promise<any>{
-  //   return this.prisma.users.delete({ where })
-  // }
+  async findBuUsername(where: Prisma.UsersWhereUniqueInput): Promise<Users | null>{
+    return this.prisma.users.findUnique({ where })
+  }
 }

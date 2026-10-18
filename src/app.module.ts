@@ -4,6 +4,8 @@ import { AppService } from './app.service.js';
 import { PrismaModule } from '@prisma-service/prisma.module.js';
 import { UsersModule } from '@users/users.module.js';
 import { ConfigModule } from '@nestjs/config';
+import { RoleModule } from './role/role.module.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [
@@ -12,7 +14,9 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: true
-    })
+    }),
+    RoleModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
