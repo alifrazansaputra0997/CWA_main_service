@@ -6,7 +6,11 @@ import { ResponseInterceptor } from './interceptors/response/response.intercepto
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableShutdownHooks();
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true
+  }));
   app.useGlobalInterceptors(new ResponseInterceptor())  
   await app.listen(process.env.PORT ?? 3000);
 }

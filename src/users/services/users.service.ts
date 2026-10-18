@@ -4,13 +4,30 @@ import { Prisma, Users } from '../../generated/prisma/client.js';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService){ }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(payload: Prisma.UsersCreateInput): Promise<Users>{
-    return this.prisma.users.create({ data: payload });
+  async createUser(payload: Prisma.UsersCreateInput): Promise<Users> {
+    return this.prisma.users.create({ 
+      data: payload,
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        isActive: true
+      }
+     });
   }
 
-  async findBuUsername(where: Prisma.UsersWhereUniqueInput): Promise<Users | null>{
-    return this.prisma.users.findUnique({ where })
+  async findByUsername(username: string): Promise<Users | null> {
+    return this.prisma.users.findUnique({
+      where: { username: username },
+    });
+  }
+
+  async findByEmail(email: string): Promise<Users | null> {
+    return this.prisma.users.findUnique({
+      where: { email: email }
+    });
   }
 }

@@ -1,4 +1,8 @@
-import { ConflictException, Controller, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Controller,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { UsersService } from '../services/users.service.js';
 import {
   Body,
@@ -8,7 +12,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  Put
+  Put,
 } from '@nestjs/common';
 import {
   UsersModel,
@@ -30,19 +34,28 @@ export class UsersController {
   @Post('/create-user')
   async createUser(@Body() p: CreateUserDto) {
     const username = p.username;
-    const usernameIsAlreadyExist = await this.usersService.findBuUsername({ username: username });
-    if(!usernameIsAlreadyExist){
+    const email = p.email;
+
+    const usernameIsAlreadyExist = await this.usersService.findByUsername(username);
+    if (usernameIsAlreadyExist) {
       throw new ConflictException('Username already exists!');
-    };
-    const payload:Prisma.UsersCreateInput = {
-      name: String(p.name).toUpperCase(),
+    }
+
+    const emailAlreadyExist = await this.usersService.findByEmail(email);
+    if (emailAlreadyExist) {
+      throw new ConflictException('Email already exists!');
+    }
+
+    const payload: Prisma.UsersCreateInput = {
+      name: p.name.trim().toUpperCase(),
       isActive: true,
       password: await this.passwordHasher.hash(p.password),
-      username: username
+      username: username,
+      email: email,
     };
-    try{
-    this.usersService.createUser(payload);
-    } catch(err){
+    try {
+      return this.usersService.createUser(payload);
+    } catch (err) {
       throw new InternalServerErrorException(err);
     }
   }
