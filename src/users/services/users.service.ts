@@ -6,17 +6,18 @@ import { Prisma, Users } from '../../generated/prisma/client.js';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(payload: Prisma.UsersCreateInput): Promise<Users> {
-    return this.prisma.users.create({ 
+  async createUser(payload: Prisma.UsersCreateInput): Promise<any> {
+    return this.prisma.users.create({
       data: payload,
       select: {
         id: true,
         name: true,
         username: true,
         email: true,
-        isActive: true
-      }
-     });
+        isActive: true,
+        password: false,
+      },
+    });
   }
 
   async findByUsername(username: string): Promise<Users | null> {
@@ -27,7 +28,7 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<Users | null> {
     return this.prisma.users.findUnique({
-      where: { email: email }
+      where: { email: email },
     });
   }
 }

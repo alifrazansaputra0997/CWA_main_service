@@ -53,6 +53,7 @@ export class UsersController {
       username: username,
       email: email,
     };
+    
     try {
       return this.usersService.createUser(payload);
     } catch (err) {
