@@ -9,9 +9,16 @@ import { AuthModule } from './auth/auth.module.js';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './interceptors/response/response.interceptor.js';
 import { GlobalExceptionInterceptor } from './interceptors/global-exception/global-exception.interceptor.js';
+import { AuthenticationModule } from '@nestjs/authentication';
 
 @Module({
   imports: [
+    AuthenticationModule.forRoot({
+      session: {
+        absoluteTtl: '2d', // Session akan kadarluarsa di hari ke 2
+        idleTtl: '1d' // Session akan dipaksa kadarluarsa jika 1 hari tidak ada aktivitas
+      }
+    }),
     PrismaModule,
     UsersModule,
     ConfigModule.forRoot({

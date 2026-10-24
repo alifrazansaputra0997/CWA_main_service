@@ -1,34 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '@prisma-service/prisma.service.js';
 import { Prisma, Users } from '../../generated/prisma/client.js';
+import { CreateUserDto } from '@users/dto/user.dto.js';
+import { UserRepository } from '@users/repository/users.repository.js';
+import { PasswordHasher } from '@nestjs/authentication';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private userRepo: UserRepository,
+    private readonly passwordHasher: PasswordHasher,
+  ) {}
 
-  async createUser(payload: Prisma.UsersCreateInput): Promise<any> {
-    return this.prisma.users.create({
-      data: payload,
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        email: true,
-        isActive: true,
-        password: false,
-      },
-    });
-  }
+  async register(p: CreateUserDto) {
+    const username = p.username;
+    const email = p.email;
 
-  async findByUsername(username: string): Promise<Users | null> {
-    return this.prisma.users.findUnique({
-      where: { username: username },
-    });
-  }
+    const usernameIsAlreadyExist =
+      await this.userRepo.findByUsername(username);
+    if (usernameIsAlreadyExist) {
+      throw new ConflictException('Username already exists!');
+    }
 
-  async findByEmail(email: string): Promise<Users | null> {
-    return this.prisma.users.findUnique({
-      where: { email: email },
-    });
+    const emailAlreadyExist = await this.userRepo.findByEmail(email);
+    if (emailAlreadyExist) {
+      throw new ConflictException('Email already exists!');
+    }
+
+    const payload: Prisma.UsersCreateInput = {
+      name: p.name.trim().toUpperCase(),
+      isActive: true,
+      password: await this.passwordHasher.hash(p.password),
+      username: username,
+      email: email,
+    };
+
+    try {
+      return this.userRepo.create(payload);
+    } catch (err) {
+      throw new InternalServerErrorException(err);
+    }
   }
 }
